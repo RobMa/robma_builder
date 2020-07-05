@@ -41,10 +41,11 @@ pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         .iter()
         .map(|x| {
             let name = x.name;
-            let initial_value = if let Some(_) = x
+            let initial_value = if x
                 .repeated_name
                 .as_ref()
                 .expect("Unexpected repeated_name error")
+                .is_some()
             {
                 quote! {vec![]}
             } else {
@@ -199,7 +200,7 @@ fn is_option(t: &syn::Type) -> bool {
     }
 }
 
-fn get_angle_bracket_arg<'f>(t: &'f syn::Type) -> Option<&'f syn::Type> {
+fn get_angle_bracket_arg(t: &syn::Type) -> Option<&syn::Type> {
     if let syn::Type::Path(t) = t {
         if let Some(t) = t.path.segments.first() {
             if let syn::PathArguments::AngleBracketed(t) = &t.arguments {
@@ -266,10 +267,11 @@ fn derive_build_function(name: &syn::Ident, fields: &[Field]) -> proc_macro2::To
                 quote! {
                     #field_name: self.#field_name.take().ok_or(#field_error_msg)?
                 }
-            } else if let Some(_) = field
+            } else if field
                 .repeated_name
                 .as_ref()
                 .expect("Unexpected repeated_name error")
+                .is_some()
             {
                 quote! {
                     #field_name: self.#field_name.clone()
