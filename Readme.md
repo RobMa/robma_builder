@@ -1,4 +1,6 @@
 # robma\_builder
+![CI master](https://github.com/RobMa/robma_builder/workflows/Continuous%20integration/badge.svg?branch=master)
+
 
 My result of the builder exercise in the excellent [proc-macro-workshop](https://github.com/dtolnay/proc-macro-workshop) by David Tolnay.
 I strongly recommend checking out this workshop to anyone who would like to get started with procedural macros in rust.
