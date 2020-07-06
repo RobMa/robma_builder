@@ -1,6 +1,8 @@
 # robma\_builder
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/RobMa/robma_builder/CI/master)
-![Documentation](https://docs.rs/robma_builder/badge.svg)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/RobMa/robma_builder/CI/master)](https://github.com/RobMa/robma_builder/actions?query=branch%3Amaster+workflow%3ACI)
+[![Documentation](https://docs.rs/robma_builder/badge.svg)](https://docs.rs/robma_builder)
+[![crates.io](https://img.shields.io/crates/v/robma_builder)](https://crates.io/crates/robma_builder)
+[![Rust version](https://img.shields.io/badge/rust-1.44+-blue.svg)](#)
 
 My result of the builder exercise in the excellent [proc-macro-workshop](https://github.com/dtolnay/proc-macro-workshop) by David Tolnay.
 I strongly recommend checking out this workshop to anyone who would like to get started with procedural macros in rust.
