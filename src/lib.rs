@@ -1,9 +1,94 @@
+//! My result of the builder exercise in the excellent [proc-macro-workshop](https://github.com/dtolnay/proc-macro-workshop) by David Tolnay.
+//!
+//! I strongly recommend checking out this workshop to anyone who would like to get started with procedural macros in rust.
+//!
+//! This is a personal learning project, do **not** use in production and consider [rust-derive-builder](https://crates.io/crates/derive_builder) instead.
+
 extern crate proc_macro;
 extern crate quote;
 extern crate syn;
 
 use quote::{format_ident, quote};
 
+/// Derives a `builder()` method that can be used to construct an instance of a `struct`.
+///
+/// The library is implemented using a procedural macro.
+/// The builder is a fluent-design pattern that simplifies the construction of a struct instance.
+/// In particular, we support the following features
+/// - No uninitialized members: checks the presence of all variables and panics in case of missing variables.
+/// - Members of type `Option` do not have to be specified and default to `None`
+/// - Repeated arguments: Members of type `Vec` can be constructed using a sequence of individual elements.
+///
+/// # Examples:
+/// ## Basic usage
+/// ```
+/// use robma_builder::Builder;
+///
+/// #[derive(Builder, Debug, PartialEq)]
+/// pub struct Command {
+///     executable: String,
+///     args: Vec<String>,
+///     env: Vec<String>,
+///     current_dir: String,
+/// }
+///
+/// let command = Command::builder()
+///        .executable("cargo".into())
+///        .args(vec!["build".into(), "--release".into()])
+///        .env(vec![])
+///        .current_dir("..".into())
+///        .build()
+///        .expect("missing arguments");
+///
+/// // The result of the above is equivalent to:
+/// let command_equivalent = Command{
+///         executable: "cargo".into(),
+///         args: vec!["build".into(), "--release".into()],
+///         env: vec![],
+///         current_dir: "..".into(),
+/// };
+/// assert_eq!(command, command_equivalent);
+/// ```
+///
+/// ## Optional members
+/// Optional members can be ommitted in the `builder` and initialized with `None`
+/// ```
+/// use robma_builder::Builder;
+///
+/// #[derive(Builder)]
+/// pub struct Command {
+///     current_dir: Option<String>,
+/// }
+///
+/// let command = Command::builder()
+///     .build()
+///     .expect("missing arguments");
+///
+/// // Unspecified option members will be initialized with None:
+/// assert!(command.current_dir.is_none());
+/// ```
+///
+/// ## Repeated arguments
+/// Members of type `Vec` can be initialized by a sequence of elements.
+/// Use the attribute `#[builder(each = "...")]` to declare the name of the function.
+/// ```
+/// use robma_builder::Builder;
+///
+/// #[derive(Builder)]
+/// pub struct Command {
+///     #[builder(each = "arg")]
+///     args: Vec<String>,
+/// }
+///
+/// let command = Command::builder()
+///     .arg("build".to_owned())
+///     .arg("--release".to_owned())
+///     .build()
+///     .expect("missing arguments");
+///
+/// // args contains the elements of each call to `arg()`
+/// assert_eq!(command.args, vec!["build", "--release"]);
+/// ```
 #[proc_macro_derive(Builder, attributes(builder))]
 pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive_input: syn::DeriveInput = syn::parse_macro_input!(input);

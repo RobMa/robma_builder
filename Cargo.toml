@@ -6,6 +6,7 @@ edition = "2018"
 autotests = false
 license = "MIT OR Apache-2.0"
 keywords = ["exercise", "proc-macro", "builder", "do_not_use"]
+authors = ["Robert Markl <robert.markl@tum.de>"]
 
 [lib]
 proc-macro = true
